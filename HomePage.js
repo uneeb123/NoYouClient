@@ -25,7 +25,7 @@ export default class HomePage extends Component<Props> {
     var username = await AsyncStorage.getItem('username');
     const { navigate } = this.props.navigation;
     if (username != null) {
-      get_url = "http://10.0.2.2:3000/user/" + username;
+      get_url = "http://api.addr.company:3000/user/" + username;
       fetch(get_url).then((response) => {
         response.json().then(json => {
           if (json.error) {

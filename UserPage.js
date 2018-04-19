@@ -7,6 +7,7 @@ import {
   Button,
   TouchableOpacity,
   AsyncStorage,
+  Image,
   View
 } from 'react-native';
 import { MessageBar, showMessage } from 'react-native-messages';
@@ -19,14 +20,44 @@ export default class UserPage extends Component<Props> {
 
   state = {
     balance: 0,
-    sender: ''
+    sender: '',
+    score: 1,
+  }
+
+  scoreMap = {
+    "1000000": 1,
+    "500000": 2,
+    "100000": 3,
+    "50000": 4,
+    "10000": 5,
+    "5000": 6,
+    "1000": 7,
+    "500": 8,
+    "100": 9,
+    "50": 10,
+    "10": 11,
+    "5": 12,
+    "1": 13,
+  }
+
+  _getScore(balance) {
+    var checkpoints = Object.keys(this.scoreMap);
+    var score;
+    checkpoints.reverse().forEach((point) => {
+      if (balance <= point) {
+        if (!score) {
+          score = this.scoreMap[point];
+        }
+      }
+    });
+    return score;
   }
 
   _sendMoney = async () => {
     sender = this.state.sender;
     var me = await AsyncStorage.getItem('username');
     const { navigate } = this.props.navigation;
-    get_url = "http://10.0.2.2:3000/user/" + sender;
+    get_url = "http://api.addr.company:3000/user/" + sender;
     fetch(get_url).then((response) => {
       response.json().then(json => {
         console.log(json);
@@ -36,7 +67,7 @@ export default class UserPage extends Component<Props> {
         }
         else {
           // send money
-          send_url = "http://10.0.2.2:3000/send/" + sender;
+          send_url = "http://api.addr.company:3000/send/" + sender;
           var body = { from_user: me };
           fetch(send_url, { 
             method: 'POST',
@@ -85,12 +116,38 @@ export default class UserPage extends Component<Props> {
     if (params) {
       this.state.username = params.username;
       this.state.balance = params.balance;
+      this.state.score = this._getScore(params.balance);
     }
+  }
+  
+  _imageForSource(score) {
+    sourceToImage = {
+      13: require('./Resources/1.png'),
+      12: require('./Resources/2.png'),
+      11: require('./Resources/3.png'),
+      10: require('./Resources/4.png'),
+      9: require('./Resources/5.png'),
+      8: require('./Resources/6.png'),
+      7: require('./Resources/7.png'),
+      6: require('./Resources/8.png'),
+      5: require('./Resources/9.png'),
+      4: require('./Resources/10.png'),
+      3: require('./Resources/11.png'),
+      2: require('./Resources/12.png'),
+      1: require('./Resources/13.png'),
+    }
+
+    return sourceToImage[score];
   }
 
   render() {
     let balance = this._formatNumber(this.state.balance);
     let name = "donate";
+    let score = this.state.score;
+    let imageSource = this._imageForSource(score);
+    let image = <Image source={imageSource} style={styles.image}/>; 
+
+    console.log("score: " + score);
 
     return (
       <View style={styles.container}>
@@ -98,6 +155,9 @@ export default class UserPage extends Component<Props> {
         <View style={styles.balanceContainer}>
           <Text>your balance</Text>
           <Text style={styles.balance}>{balance}</Text>
+        </View>
+        <View style={styles.imageContainer}>
+          {image}
         </View>
         <View style={styles.nameContainer}>
           <Text style={styles.nameLabel}>{name}</Text>
@@ -155,6 +215,15 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     margin: 20,
     flex: 1,
+  },
+  imageContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  image: {
+    height: 200,
+    width: 200,
+    resizeMode: 'contain'
   }
-
 });

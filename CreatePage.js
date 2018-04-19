@@ -37,7 +37,7 @@ export default class CreatePage extends Component<Props> {
     else {
       var that = this;
       // create user
-      create_url = "http://10.0.2.2:3000/create";
+      create_url = "http://api.addr.company:3000/create";
       console.log(user);
       var body = { username: user };
       fetch(create_url, { 
@@ -63,7 +63,7 @@ export default class CreatePage extends Component<Props> {
 
   _goNext(user) {
     const { navigate } = this.props.navigation;
-    get_url = "http://10.0.2.2:3000/user/" + user;
+    get_url = "http://api.addr.company:3000/user/" + user;
     fetch(get_url).then((response) => {
       response.json().then(json => {
         console.log(json);
