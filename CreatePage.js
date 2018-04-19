@@ -7,10 +7,10 @@ import {
   AsyncStorage,
   Image,
   View,
+  Keyboard,
   TouchableOpacity
 } from 'react-native';
 import { MessageBar, showMessage } from 'react-native-messages';
-import FormData from 'form-data';
 
 type Props = {};
 export default class CreatePage extends Component<Props> {
@@ -29,22 +29,27 @@ export default class CreatePage extends Component<Props> {
       showMessage('Please enter name!');
     }
     else if (user != user.toLowerCase()) {
-      showMessage('Only lower case names accepted!');
+      showMessage('Only single-word, lower-case names accepted!');
     }
-    else if (!/^[a-zA-Z]+$/.test(user)) {
-      showMessage('Names should only be alphabets!');
+    else if (!/^[a-z0-9]+$/.test(user)) {
+      showMessage('Names can only be alphanumeric!');
     }
     else {
       var that = this;
       // create user
-      create_url = "http://api.addr.company:3000/create/";
-      const form = new FormData();
-      form.append('username', user);
-      fetch(create_url, { method: 'POST', body: form }).then((response) => {
+      create_url = "http://10.0.2.2:3000/create";
+      console.log(user);
+      var body = { username: user };
+      fetch(create_url, { 
+        method: 'POST',
+        body:    JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json'}}).then((response) => {
+        console.log(response);
         response.json().then(json => {
+          console.log(json);
           if (json.error) {
             // user already exists
-            that._goNext(user);
+            showMessage('Try a different name!');
           }
           else {
             // navigate to next page
@@ -58,22 +63,22 @@ export default class CreatePage extends Component<Props> {
 
   _goNext(user) {
     const { navigate } = this.props.navigation;
-    get_url = "http://api.addr.company:3000/user/" + user;
+    get_url = "http://10.0.2.2:3000/user/" + user;
     fetch(get_url).then((response) => {
       response.json().then(json => {
+        console.log(json);
         if (json.error) {
           console.log(json);
         }
         else {
           if (json.balance > 0) {
+            Keyboard.dismiss
             navigate('User', {
               username: json.username,
               balance: json.balance
             });
           } else {
-            navigate('Find', {
-              username: json.username,
-            });
+            navigate('Find');
           }
         }
       });
