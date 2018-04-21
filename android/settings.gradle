@@ -1,3 +1,3 @@
-rootProject.name = 'NoYouClient'
+rootProject.name = 'Noyou'
 
 include ':app'

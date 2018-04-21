@@ -53,17 +53,53 @@ export default class UserPage extends Component<Props> {
     return score;
   }
 
+  async _saveReceiver(recv) {
+    try {
+      var all_receivers = await AsyncStorage.getItem('receivers');
+      var receiversArray = all_receivers.split(',');
+      receiversArray.push(recv);
+      all_receivers = receiversArray.join(',');
+      AsyncStorage.setItem('receivers', all_receivers);
+    } catch(error) {
+      AsyncStorage.setItem('receivers', recv);
+    }
+  }
+
+  _checkIfAlreadySent(receivers, actual) {
+    var there = false;
+    receiversArray = receivers.split(',');
+    receiversArray.forEach((receiver) => {
+      if (receiver == actual) {
+        there = true;
+      }
+    });
+    return there;
+  }
+
   _sendMoney = async () => {
     sender = this.state.sender;
     var me = await AsyncStorage.getItem('username');
+    try {
+      var all_receivers = await AsyncStorage.getItem('receivers');
+      if (all_receivers !== null){
+        if (this._checkIfAlreadySent(all_receivers, sender)) {
+          showMessage("Already sent money to this guy once!");
+          return;
+        }
+        else {
+          await AsyncStorage.setItem('receivers', '');
+        }
+      }
+    } catch (error) {
+      // swallow
+      await AsyncStorage.setItem('receivers', '');
+    }
     const { navigate } = this.props.navigation;
     get_url = "http://api.addr.company:3000/user/" + sender;
     fetch(get_url).then((response) => {
       response.json().then(json => {
-        console.log(json);
         if (json.error) {
           showMessage("Can't find user!");
-          console.log(json);
         }
         else {
           // send money
@@ -74,12 +110,12 @@ export default class UserPage extends Component<Props> {
             body:    JSON.stringify(body),
             headers: { 'Content-Type': 'application/json'}
           }).then((response) => {
-            console.log(response);
             response.json().then(json => {
               if (json.error) {
                 showMessage("Something went wrong");
               }
               else {
+                this._saveReceiver(sender);
                 navigate('Home');
               }
             });
@@ -146,14 +182,14 @@ export default class UserPage extends Component<Props> {
     let score = this.state.score;
     let imageSource = this._imageForSource(score);
     let image = <Image source={imageSource} style={styles.image}/>; 
-
-    console.log("score: " + score);
+    let username = this.state.username;
 
     return (
       <View style={styles.container}>
         <MessageBar/>
         <View style={styles.balanceContainer}>
-          <Text>your balance</Text>
+          <Text>{username}</Text>
+          <Text>{username} your balance</Text>
           <Text style={styles.balance}>{balance}</Text>
         </View>
         <View style={styles.imageContainer}>

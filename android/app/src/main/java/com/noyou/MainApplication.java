@@ -1,4 +1,4 @@
-package com.noyouclient;
+package com.noyou;
 
 import android.app.Application;
 
