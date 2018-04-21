@@ -22,6 +22,7 @@ export default class UserPage extends Component<Props> {
     balance: 0,
     sender: '',
     score: 1,
+    buttonDisabled: false,
   }
 
   scoreMap = {
@@ -76,14 +77,24 @@ export default class UserPage extends Component<Props> {
     return there;
   }
 
+  _fetchUserName() {
+    AsyncStorage.getItem('username', (err, result) => {
+      this.setState({
+        username: result,
+      });
+    });
+  }
+
   _sendMoney = async () => {
     sender = this.state.sender;
-    var me = await AsyncStorage.getItem('username');
+    var me = this.state.username;
+    this.setState({buttonDisabled: true});
     try {
       var all_receivers = await AsyncStorage.getItem('receivers');
       if (all_receivers !== null){
         if (this._checkIfAlreadySent(all_receivers, sender)) {
           showMessage("Already sent money to this guy once!");
+          this.setState({buttonDisabled: false});
           return;
         }
         else {
@@ -100,6 +111,7 @@ export default class UserPage extends Component<Props> {
       response.json().then(json => {
         if (json.error) {
           showMessage("Can't find user!");
+          this.setState({buttonDisabled: false});
         }
         else {
           // send money
@@ -113,6 +125,7 @@ export default class UserPage extends Component<Props> {
             response.json().then(json => {
               if (json.error) {
                 showMessage("Something went wrong");
+                this.setState({buttonDisabled: false});
               }
               else {
                 this._saveReceiver(sender);
@@ -147,13 +160,12 @@ export default class UserPage extends Component<Props> {
 
   constructor(props) {
     super(props);
-    Keyboard.dismiss
     const { params } = this.props.navigation.state;
     if (params) {
-      this.state.username = params.username;
       this.state.balance = params.balance;
       this.state.score = this._getScore(params.balance);
     }
+    this._fetchUserName();
   }
   
   _imageForSource(score) {
@@ -186,10 +198,11 @@ export default class UserPage extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <MessageBar/>
+        <View style={styles.userContainer}>
+          <Text>player name: {username}</Text>
+        </View>
         <View style={styles.balanceContainer}>
-          <Text>{username}</Text>
-          <Text>{username} your balance</Text>
+          <Text>your balance</Text>
           <Text style={styles.balance}>{balance}</Text>
         </View>
         <View style={styles.imageContainer}>
@@ -204,7 +217,7 @@ export default class UserPage extends Component<Props> {
             onChangeText={(text) => this.setState({sender: text})}
             value={this.state.sender}
           />
-          <TouchableOpacity style={styles.button} onPress={this._sendMoney}>
+          <TouchableOpacity style={styles.button} onPress={this._sendMoney} disabled={this.state.buttonDisabled}>
             <Text>send</Text>
           </TouchableOpacity>
         </View>
@@ -261,5 +274,12 @@ const styles = StyleSheet.create({
     height: 200,
     width: 200,
     resizeMode: 'contain'
+  },
+  userContainer: {
+    backgroundColor: 'rgba(250, 250, 250, 0.8)',
+    margin: 20,
+    padding: 10,
+    borderRadius: 10,
+    alignSelf:'baseline'
   }
 });

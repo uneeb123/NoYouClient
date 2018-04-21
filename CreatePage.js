@@ -91,7 +91,6 @@ export default class CreatePage extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <MessageBar/>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
           <Text>
