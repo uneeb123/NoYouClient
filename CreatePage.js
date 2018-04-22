@@ -96,7 +96,7 @@ export default class CreatePage extends Component<Props> {
         <View style={styles.container}>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{title}</Text>
-            <Text>
+            <Text style={{color: 'white'}}>
               <Text>{"...because you really, "}</Text>
               <Text style={{fontStyle: 'italic'}}>{"really"}</Text>
               <Text>{" don't need it!"}</Text>
@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: 'white',
   },
   image: {
     width: 155,
@@ -152,6 +153,7 @@ const styles = StyleSheet.create({
     width: 180,
     borderColor: 'gray',
     borderRadius: 10,
+    backgroundColor: 'white',
     borderWidth: 1
   },
   titleContainer: {
@@ -175,5 +177,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     margin: 20,
     flex: 1,
+    color: 'white',
   }
 });
