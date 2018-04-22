@@ -22,19 +22,23 @@ export default class CreatePage extends Component<Props> {
 
   constructor(props) {
     super(props);
-    this.state = { name: '' };
+    this.state = { name: '', buttonDisabled: false };
   }
 
   _createAccount = () => {
-    user = this.state.name.trim();;
+    user = this.state.name.trim();
+    this.setState({buttonDisabled: true});
     if (!user) {
       showMessage('Please enter name!');
+      this.setState({buttonDisabled: false});
     }
     else if (user != user.toLowerCase()) {
       showMessage('Only single-word, lower-case names accepted!');
+      this.setState({buttonDisabled: false});
     }
     else if (!/^[a-z0-9]+$/.test(user)) {
       showMessage('Names can only be alphanumeric!');
+      this.setState({buttonDisabled: false});
     }
     else {
       Keyboard.dismiss();
@@ -53,6 +57,7 @@ export default class CreatePage extends Component<Props> {
           if (json.error) {
             // user already exists
             showMessage('Try a different name!');
+            this.setState({buttonDisabled: false});
           }
           else {
             // navigate to next page
@@ -90,6 +95,16 @@ export default class CreatePage extends Component<Props> {
   render() {
     let title = "no, u!";
     let name = "name";
+    let buttonDisabled = this.state.buttonDisabled;
+    const enabledButton = <TouchableOpacity
+        style={styles.button} onPress={this._createAccount}>
+        <Text>enter</Text>
+      </TouchableOpacity>
+    const disabledButton = <TouchableOpacity
+        style={styles.buttonDisabled} disabled={true}>
+        <Text>entering...</Text>
+      </TouchableOpacity>
+
 
     return (
       <Container>
@@ -117,9 +132,7 @@ export default class CreatePage extends Component<Props> {
               onChangeText={(text) => this.setState({name: text})}
               value={this.state.name}
             />
-            <TouchableOpacity style={styles.button} onPress={this._createAccount}>
-              <Text>enter</Text>
-            </TouchableOpacity>
+            {buttonDisabled ? disabledButton : enabledButton}
           </View>
         </View>
       </Container>
@@ -169,6 +182,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
+    borderRadius: 5,
+    padding: 10,
+    margin: 20,
+  },
+  buttonDisabled: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
     borderRadius: 5,
     padding: 10,
     margin: 20,
