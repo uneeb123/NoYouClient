@@ -35,6 +35,7 @@ export default class CreatePage extends Component<Props> {
       showMessage('Names can only be alphanumeric!');
     }
     else {
+      Keyboard.dismiss();
       var that = this;
       // create user
       create_url = "http://api.addr.company:3000/create";
@@ -72,7 +73,6 @@ export default class CreatePage extends Component<Props> {
         }
         else {
           if (json.balance > 0) {
-            Keyboard.dismiss
             navigate('User', {
               username: json.username,
               balance: json.balance

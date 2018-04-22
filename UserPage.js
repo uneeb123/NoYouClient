@@ -21,7 +21,7 @@ export default class UserPage extends Component<Props> {
   state = {
     balance: 0,
     sender: '',
-    score: 1,
+    score: 0,
     buttonDisabled: false,
   }
 
@@ -42,28 +42,42 @@ export default class UserPage extends Component<Props> {
   }
 
   _getScore(balance) {
-    var checkpoints = Object.keys(this.scoreMap);
-    var score;
-    checkpoints.reverse().forEach((point) => {
-      if (balance <= point) {
-        if (!score) {
-          score = this.scoreMap[point];
+    balance = Number(balance);
+    var checkpoints = Object.keys(this.scoreMap).sort(function(a,b) {
+      return (+a) - (+b);
+    }).reverse();
+    if (balance >= this.scoreMap[0]) {
+      this.setState({score: 1});
+    }
+    else if (balance == this.scoreMap[checkpoints.length - 1]) {
+      this.setState({score: this.scoreMap[checkpoints.length-1]});
+    }
+    else {
+      for (var i = 1; i < checkpoints.length; i++) {
+        var upperBound = Number(checkpoints[i-1]);
+        var lowerBound = Number(checkpoints[i]);
+        if ((balance >= lowerBound) && (balance < upperBound)) {
+          this.setState({score: this.scoreMap[checkpoints[i]]});
         }
       }
-    });
-    return score;
+    }
   }
 
-  async _saveReceiver(recv) {
-    try {
-      var all_receivers = await AsyncStorage.getItem('receivers');
-      var receiversArray = all_receivers.split(',');
-      receiversArray.push(recv);
-      all_receivers = receiversArray.join(',');
-      AsyncStorage.setItem('receivers', all_receivers);
-    } catch(error) {
-      AsyncStorage.setItem('receivers', recv);
-    }
+  _saveReceiver(recv) {
+    AsyncStorage.getItem('receivers', (err, all_receivers) => {
+      if (err) {
+        console.log(err);
+      }
+      if (all_receivers) {
+        var receiversArray = all_receivers.split(',');
+        receiversArray.push(recv);
+        all_receivers = receiversArray.join(',');
+        AsyncStorage.setItem('receivers', all_receivers);
+      }
+      else {
+        AsyncStorage.setItem('receivers', recv);
+      }
+    });
   }
 
   _checkIfAlreadySent(receivers, actual) {
@@ -86,6 +100,7 @@ export default class UserPage extends Component<Props> {
   }
 
   _sendMoney = async () => {
+    Keyboard.dismiss();
     sender = this.state.sender;
     var me = this.state.username;
     this.setState({buttonDisabled: true});
@@ -96,9 +111,6 @@ export default class UserPage extends Component<Props> {
           showMessage("Already sent money to this guy once!");
           this.setState({buttonDisabled: false});
           return;
-        }
-        else {
-          await AsyncStorage.setItem('receivers', '');
         }
       }
     } catch (error) {
@@ -163,7 +175,6 @@ export default class UserPage extends Component<Props> {
     const { params } = this.props.navigation.state;
     if (params) {
       this.state.balance = params.balance;
-      this.state.score = this._getScore(params.balance);
     }
     this._fetchUserName();
   }
@@ -188,6 +199,10 @@ export default class UserPage extends Component<Props> {
     return sourceToImage[score];
   }
 
+  componentWillMount() {
+    this._getScore(this.state.balance);
+  }
+
   render() {
     let balance = this._formatNumber(this.state.balance);
     let name = "donate";
@@ -195,6 +210,18 @@ export default class UserPage extends Component<Props> {
     let imageSource = this._imageForSource(score);
     let image = <Image source={imageSource} style={styles.image}/>; 
     let username = this.state.username;
+    let buttonDisabled = this.state.buttonDisabled;
+    console.log("button disabled? " + buttonDisabled);
+
+    const enabledButton = <TouchableOpacity
+            style={styles.buttonEnabled} onPress={this._sendMoney}>
+            <Text>send</Text>
+          </TouchableOpacity>
+    const disabledButton = <TouchableOpacity
+            style={styles.buttonDisabled} disabled={true}>
+            <Text>sending...</Text>
+          </TouchableOpacity>
+
 
     return (
       <View style={styles.container}>
@@ -206,7 +233,7 @@ export default class UserPage extends Component<Props> {
           <Text style={styles.balance}>{balance}</Text>
         </View>
         <View style={styles.imageContainer}>
-          {image}
+          <Text>{score}</Text>
         </View>
         <View style={styles.nameContainer}>
           <Text style={styles.nameLabel}>{name}</Text>
@@ -217,9 +244,7 @@ export default class UserPage extends Component<Props> {
             onChangeText={(text) => this.setState({sender: text})}
             value={this.state.sender}
           />
-          <TouchableOpacity style={styles.button} onPress={this._sendMoney} disabled={this.state.buttonDisabled}>
-            <Text>send</Text>
-          </TouchableOpacity>
+          {buttonDisabled ? disabledButton : enabledButton}
         </View>
       </View>
     );
@@ -252,10 +277,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1
   },
-  button: {
+  buttonEnabled: {
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
+    borderRadius: 5,
+    padding: 10,
+    margin: 20,
+  },
+  buttonDisabled: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
     borderRadius: 5,
     padding: 10,
     margin: 20,
