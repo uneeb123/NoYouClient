@@ -11,6 +11,7 @@ import {
   View
 } from 'react-native';
 import { MessageBar, showMessage } from 'react-native-messages';
+import Container from './Container';
 
 type Props = {};
 export default class UserPage extends Component<Props> {
@@ -224,29 +225,31 @@ export default class UserPage extends Component<Props> {
 
 
     return (
-      <View style={styles.container}>
-        <View style={styles.userContainer}>
-          <Text>player name: {username}</Text>
+      <Container>
+        <View style={styles.container}>
+          <View style={styles.userContainer}>
+            <Text>player name: {username}</Text>
+          </View>
+          <View style={styles.balanceContainer}>
+            <Text>your balance</Text>
+            <Text style={styles.balance}>{balance}</Text>
+          </View>
+          <View style={styles.imageContainer}>
+            <Text>{score}</Text>
+          </View>
+          <View style={styles.nameContainer}>
+            <Text style={styles.nameLabel}>{name}</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              underlineColorAndroid='transparent'
+              onChangeText={(text) => this.setState({sender: text})}
+              value={this.state.sender}
+            />
+            {buttonDisabled ? disabledButton : enabledButton}
+          </View>
         </View>
-        <View style={styles.balanceContainer}>
-          <Text>your balance</Text>
-          <Text style={styles.balance}>{balance}</Text>
-        </View>
-        <View style={styles.imageContainer}>
-          <Text>{score}</Text>
-        </View>
-        <View style={styles.nameContainer}>
-          <Text style={styles.nameLabel}>{name}</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            underlineColorAndroid='transparent'
-            onChangeText={(text) => this.setState({sender: text})}
-            value={this.state.sender}
-          />
-          {buttonDisabled ? disabledButton : enabledButton}
-        </View>
-      </View>
+      </Container>
     );
   }
 }

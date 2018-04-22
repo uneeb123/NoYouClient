@@ -12,6 +12,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { MessageBar, showMessage } from 'react-native-messages';
+import Container from './Container'
 
 type Props = {};
 export default class CreatePage extends Component<Props> {
@@ -91,43 +92,37 @@ export default class CreatePage extends Component<Props> {
     let name = "name";
 
     return (
-      <ImageBackground
-        style={{
-          width: '100%',
-          height: '100%',
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center'}}
-        source={require('./Resources/background.png')}
-      >
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{title}</Text>
-          <Text>
-            <Text>{"...because you really, "}</Text>
-            <Text style={{fontStyle: 'italic'}}>{"really"}</Text>
-            <Text>{" don't need it!"}</Text>
-          </Text>
+      <Container>
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{title}</Text>
+            <Text>
+              <Text>{"...because you really, "}</Text>
+              <Text style={{fontStyle: 'italic'}}>{"really"}</Text>
+              <Text>{" don't need it!"}</Text>
+            </Text>
+            </View>
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.image}
+              source={require('./Resources/title.png')}
+            />
           </View>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={require('./Resources/title.png')}
-          />
+          <View style={styles.nameContainer}>
+            <Text style={styles.nameLabel}>{name}</Text>
+            <TextInput
+              style={styles.input}
+              autoCorrect={false}
+              underlineColorAndroid='transparent'
+              onChangeText={(text) => this.setState({name: text})}
+              value={this.state.name}
+            />
+            <TouchableOpacity style={styles.button} onPress={this._createAccount}>
+              <Text>enter</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.nameContainer}>
-          <Text style={styles.nameLabel}>{name}</Text>
-          <TextInput
-            style={styles.input}
-            autoCorrect={false}
-            underlineColorAndroid='transparent'
-            onChangeText={(text) => this.setState({name: text})}
-            value={this.state.name}
-          />
-          <TouchableOpacity style={styles.button} onPress={this._createAccount}>
-            <Text>enter</Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+      </Container>
     );
   }
 }
@@ -136,7 +131,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
-    backgroundColor: '#F5FCFF',
   },
   title: {
     fontSize: 24,

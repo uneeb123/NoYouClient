@@ -6,6 +6,7 @@ import {
   View
 } from 'react-native';
 import FormData from 'form-data';
+import Container from './Container';
 
 type Props = {};
 export default class HomePage extends Component<Props> {
@@ -50,11 +51,13 @@ export default class HomePage extends Component<Props> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text>
-          loading...
-        </Text>
-      </View>
+      <Container>
+        <View style={styles.container}>
+          <Text>
+            loading...
+          </Text>
+        </View>
+      </Container>
     );
   }
 }

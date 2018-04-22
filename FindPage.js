@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import Container from './Container';
 
 type Props = {};
 export default class FindPage extends Component<Props> {
@@ -50,17 +51,19 @@ You get you started in the game, you must find a benefactor first. Give them you
 Once you have something in your bank account, you are off the ground!`;
 
     return (
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{title}</Text>
+      <Container>
+        <View style={styles.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{title}</Text>
+          </View>
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{description}</Text>
+          </View>
+          <TouchableOpacity style={styles.button} onPress={this._tryAgain}>
+            <Text>found one!</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.description}>{description}</Text>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={this._tryAgain}>
-          <Text>found one!</Text>
-        </TouchableOpacity>
-      </View>
+      </Container>
     );
   }
 }
