@@ -8,6 +8,7 @@ import {
   Image,
   View,
   Keyboard,
+  ImageBackground,
   TouchableOpacity
 } from 'react-native';
 import { MessageBar, showMessage } from 'react-native-messages';
@@ -90,7 +91,15 @@ export default class CreatePage extends Component<Props> {
     let name = "name";
 
     return (
-      <View style={styles.container}>
+      <ImageBackground
+        style={{
+          width: '100%',
+          height: '100%',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center'}}
+        source={require('./Resources/background.png')}
+      >
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
           <Text>
@@ -118,7 +127,7 @@ export default class CreatePage extends Component<Props> {
             <Text>enter</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ImageBackground>
     );
   }
 }
