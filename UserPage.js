@@ -204,6 +204,14 @@ export default class UserPage extends Component<Props> {
     this._getScore(this.state.balance);
   }
 
+  _scoreBars(score) {
+    x = [];
+    for (var i = 0; i < score; i++) {
+      x.push(<View key={i} style={styles.scoreBar}/>)
+    }
+    return x;
+  }
+
   render() {
     let balance = this._formatNumber(this.state.balance);
     let name = "donate";
@@ -212,6 +220,7 @@ export default class UserPage extends Component<Props> {
     let image = <Image source={imageSource} style={styles.image}/>; 
     let username = this.state.username;
     let buttonDisabled = this.state.buttonDisabled;
+    let bar = this._scoreBars(score);
 
     const enabledButton = <TouchableOpacity
             style={styles.buttonEnabled} onPress={this._sendMoney}>
@@ -238,6 +247,9 @@ export default class UserPage extends Component<Props> {
           </View>
           <View style={styles.imageContainer}>
             <Text>{score}</Text>
+            <View style={styles.scoreMeter}>
+              {bar}
+            </View>
           </View>
           <View style={styles.nameContainer}>
             <Text style={styles.nameLabel}>{name}</Text>
@@ -329,5 +341,19 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: 13,
     color: 'white',
+  },
+  scoreMeter: {
+    width: 200,
+    height: 50,
+    backgroundColor: 'rgba(250, 250, 250, 0.8)',
+    flexDirection: 'row',
+    overflow: 'hidden',
+    borderRadius: 20,
+  },
+  scoreBar: {
+    width: 15,
+    height: 55,
+    backgroundColor: '#68f441',
+    margin: 1,
   }
 });
