@@ -47,11 +47,11 @@ export default class UserPage extends Component<Props> {
     var checkpoints = Object.keys(this.scoreMap).sort(function(a,b) {
       return (+a) - (+b);
     }).reverse();
-    if (balance >= this.scoreMap[0]) {
+    if (balance >= checkpoints[0]) {
       this.setState({score: 1});
     }
-    else if (balance == this.scoreMap[checkpoints.length - 1]) {
-      this.setState({score: this.scoreMap[checkpoints.length-1]});
+    else if (balance <= checkpoints[checkpoints.length - 1]) {
+      this.setState({score: this.scoreMap[checkpoints[checkpoints.length-1]]});
     }
     else {
       for (var i = 1; i < checkpoints.length; i++) {
@@ -212,7 +212,6 @@ export default class UserPage extends Component<Props> {
     let image = <Image source={imageSource} style={styles.image}/>; 
     let username = this.state.username;
     let buttonDisabled = this.state.buttonDisabled;
-    console.log("button disabled? " + buttonDisabled);
 
     const enabledButton = <TouchableOpacity
             style={styles.buttonEnabled} onPress={this._sendMoney}>
@@ -228,10 +227,13 @@ export default class UserPage extends Component<Props> {
       <Container>
         <View style={styles.container}>
           <View style={styles.userContainer}>
-            <Text>player name: {username}</Text>
+            <Text>
+              <Text style={styles.playerLabel}>player name: </Text>
+              <Text style={styles.playerName}>{username}</Text>
+            </Text>
           </View>
           <View style={styles.balanceContainer}>
-            <Text>your balance</Text>
+            <Text style={{color: 'white'}}>your balance</Text>
             <Text style={styles.balance}>{balance}</Text>
           </View>
           <View style={styles.imageContainer}>
@@ -257,7 +259,6 @@ export default class UserPage extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
   },
   balanceContainer: {
     flex: 1,
@@ -266,6 +267,7 @@ const styles = StyleSheet.create({
   },
   balance: {
     fontSize: 60,
+    color: 'white',
   },
   nameContainer: {
     flexDirection: 'row',
@@ -277,6 +279,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 180,
     borderColor: 'gray',
+    backgroundColor: 'white',
     borderRadius: 10,
     borderWidth: 1
   },
@@ -300,6 +303,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     margin: 20,
     flex: 1,
+    color: 'white',
   },
   imageContainer: {
     flex: 1,
@@ -312,10 +316,18 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   userContainer: {
-    backgroundColor: 'rgba(250, 250, 250, 0.8)',
+    backgroundColor: 'rgba(250, 250, 250, 0.3)',
     margin: 20,
     padding: 10,
     borderRadius: 10,
     alignSelf:'baseline'
+  },
+  playerLabel: {
+    fontSize: 10,
+    color: 'white',
+  },
+  playerName: {
+    fontSize: 13,
+    color: 'white',
   }
 });

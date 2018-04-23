@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
   titleContainer: {
     justifyContent: 'center',
@@ -85,10 +84,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    color: 'white',
   },
   description: {
     margin: 20,
     textAlign: 'center',
+    color: 'white',
   },
   button: {
     backgroundColor: '#DDDDDD',

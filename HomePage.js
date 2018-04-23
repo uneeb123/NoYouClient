@@ -53,8 +53,8 @@ export default class HomePage extends Component<Props> {
     return (
       <Container>
         <View style={styles.container}>
-          <Text>
-            loading...
+          <Text style={styles.text}>
+            Loading...
           </Text>
         </View>
       </Container>
@@ -67,6 +67,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
+  text: {
+    color: 'white',
+  }
 });
